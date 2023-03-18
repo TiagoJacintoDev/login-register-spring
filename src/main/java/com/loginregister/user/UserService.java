@@ -31,4 +31,8 @@ public class UserService {
     public void delete(User userModel) {
         userRepository.delete(userModel);
     }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }
