@@ -1,5 +1,7 @@
 package com.loginregister.user;
 
+import com.loginregister.role.Role;
+import com.loginregister.role.RoleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,27 +22,30 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    private final String NOT_FOUND_BODY = "User not found.";
-    private final String DELETED_BODY = "User successfully deleted.";
+    @Autowired
+    private RoleService roleService;
+
+    private final String NOT_FOUND_BODY = "UserModel not found.";
+    private final String DELETED_BODY = "UserModel successfully deleted.";
 
     @PostMapping
     public ResponseEntity<Object> saveUser(@RequestBody @Valid UserDto userDto){
-        var userModel = new User();
+        var userModel = new UserModel();
         userModel.setUsername(userDto.username());
         userModel.setPassword(new BCryptPasswordEncoder().encode(userDto.password()));
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userModel));
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<List<User>> getAllUsers(){
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<UserModel>> getAllUsers(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> getOneUser(@PathVariable(value = "id") UUID id){
-        Optional<User> userModelOptional = userService.findById(id);
+        Optional<UserModel> userModelOptional = userService.findById(id);
         if (userModelOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND_BODY);
         }
@@ -50,7 +55,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") UUID id){
-        Optional<User> parkingSpotModelOptional = userService.findById(id);
+        Optional<UserModel> parkingSpotModelOptional = userService.findById(id);
         if (parkingSpotModelOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND_BODY);
         }
@@ -62,14 +67,48 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<Object> updateUser(@PathVariable(value = "id") UUID id,
                                                            @RequestBody @Valid UserDto userDto){
-        Optional<User> userModelOptional = userService.findById(id);
+        Optional<UserModel> userModelOptional = userService.findById(id);
         if (userModelOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND_BODY);
         }
-        var userModel = new User();
+        var userModel = new UserModel();
         userModel.setId(userModelOptional.get().getId());
         userModel.setUsername(userDto.username());
         userModel.setPassword(new BCryptPasswordEncoder().encode(userDto.password()));
         return ResponseEntity.status(HttpStatus.OK).body(userService.save(userModel));
+    }
+
+    @PutMapping("/{userId}/role/{roleId}")
+    public ResponseEntity<Object> assignRoleToUser(@PathVariable(value = "userId") UUID userId,
+                                                   @PathVariable(value = "roleId") UUID roleId){
+        Optional<UserModel> userModelOptional = userService.findById(userId);
+        Optional<Role> roleModelOptional = roleService.findById(roleId);
+
+        if(userModelOptional.isEmpty() && roleModelOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User and role not found.");
+        }
+
+        if(userModelOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+
+        if(roleModelOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found");
+        }
+
+        var userModel = userModelOptional.get();
+        var roleModel = roleModelOptional.get();
+
+        userModel.addRole(roleModel);
+        roleModel.addUser(userModel);
+
+        userService.save(userModel);
+        roleService.save(roleModel);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                "User with id: "
+                        + userModel.getId() +
+                        " is now assigned to role with id: "
+                        + roleModel.getId());
     }
 }

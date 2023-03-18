@@ -15,24 +15,24 @@ public class UserService {
     private UserRepository userRepository;
 
     @Transactional
-    public User save(User userModel) {
+    public UserModel save(UserModel userModel) {
         return userRepository.save(userModel);
     }
 
-    public List<User> findAll() {
+    public List<UserModel> findAll() {
         return userRepository.findAll();
     }
 
-    public Optional<User> findById(UUID id) {
+    public Optional<UserModel> findById(UUID id) {
         return userRepository.findById(id);
     }
 
     @Transactional
-    public void delete(User userModel) {
+    public void delete(UserModel userModel) {
         userRepository.delete(userModel);
     }
 
-    public Optional<User> findByUsername(String username) {
+    public Optional<UserModel> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 }
