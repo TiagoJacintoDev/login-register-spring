@@ -1,6 +1,5 @@
 package com.loginregister.role;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.loginregister.user.UserModel;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,7 +13,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "TB_ROLE")
-public class Role implements GrantedAuthority {
+public class RoleModel implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -22,7 +21,7 @@ public class Role implements GrantedAuthority {
     @Column(nullable = false,unique = true)
     private String roleName;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roleModels")
     private List<UserModel> users;
 
     public void addUser(UserModel user) {

@@ -15,20 +15,20 @@ public class RoleService {
     private RoleRepository roleRepository;
 
     @Transactional
-    public Role save(Role roleModel) {
+    public RoleModel save(RoleModel roleModel) {
         return roleRepository.save(roleModel);
     }
 
-    public List<Role> findAll() {
+    public List<RoleModel> findAll() {
         return roleRepository.findAll();
     }
 
-    public Optional<Role> findById(UUID id) {
+    public Optional<RoleModel> findById(UUID id) {
         return roleRepository.findById(id);
     }
 
     @Transactional
-    public void delete(Role roleModel) {
+    public void delete(RoleModel roleModel) {
         roleRepository.delete(roleModel);
     }
 }

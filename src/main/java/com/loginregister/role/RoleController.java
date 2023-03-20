@@ -23,19 +23,19 @@ public class RoleController {
 
     @PostMapping
     public ResponseEntity<Object> saveRole(@RequestBody @Valid RoleDto roleDto){
-        var roleModel = new Role();
+        var roleModel = new RoleModel();
         BeanUtils.copyProperties(roleDto, roleModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(roleService.save(roleModel));
     }
 
     @GetMapping
-    public ResponseEntity<List<Role>> getAllRoles(){
+    public ResponseEntity<List<RoleModel>> getAllRoles(){
         return ResponseEntity.status(HttpStatus.OK).body(roleService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneRole(@PathVariable(value = "id") UUID id){
-        Optional<Role> roleModelOptional = roleService.findById(id);
+        Optional<RoleModel> roleModelOptional = roleService.findById(id);
         if (roleModelOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND_BODY);
         }
@@ -44,7 +44,7 @@ public class RoleController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteRole(@PathVariable(value = "id") UUID id){
-        Optional<Role> parkingSpotModelOptional = roleService.findById(id);
+        Optional<RoleModel> parkingSpotModelOptional = roleService.findById(id);
         if (parkingSpotModelOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND_BODY);
         }
@@ -55,11 +55,11 @@ public class RoleController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateRole(@PathVariable(value = "id") UUID id,
                                                            @RequestBody @Valid RoleDto roleDto){
-        Optional<Role> roleModelOptional = roleService.findById(id);
+        Optional<RoleModel> roleModelOptional = roleService.findById(id);
         if (roleModelOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND_BODY);
         }
-        var roleModel = new Role();
+        var roleModel = new RoleModel();
         BeanUtils.copyProperties(roleDto, roleModel);
         roleModel.setId(roleModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(roleService.save(roleModel));

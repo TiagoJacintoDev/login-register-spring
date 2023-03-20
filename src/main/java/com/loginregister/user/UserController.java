@@ -1,9 +1,8 @@
 package com.loginregister.user;
 
-import com.loginregister.role.Role;
+import com.loginregister.role.RoleModel;
 import com.loginregister.role.RoleService;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -82,7 +81,7 @@ public class UserController {
     public ResponseEntity<Object> assignRoleToUser(@PathVariable(value = "userId") UUID userId,
                                                    @PathVariable(value = "roleId") UUID roleId){
         Optional<UserModel> userModelOptional = userService.findById(userId);
-        Optional<Role> roleModelOptional = roleService.findById(roleId);
+        Optional<RoleModel> roleModelOptional = roleService.findById(roleId);
 
         if(userModelOptional.isEmpty() && roleModelOptional.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User and role not found.");

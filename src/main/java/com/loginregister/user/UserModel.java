@@ -1,7 +1,7 @@
 package com.loginregister.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.loginregister.role.Role;
+import com.loginregister.role.RoleModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,15 +32,15 @@ public class UserModel implements UserDetails {
     @JoinTable(name = "TB_USERS_ROLES",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles;
+    private List<RoleModel> roleModels;
 
-    public void addRole(Role role) {
-        roles.add(role);
+    public void addRole(RoleModel roleModel) {
+        roleModels.add(roleModel);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
+        return roleModels;
     }
 
     @Override
