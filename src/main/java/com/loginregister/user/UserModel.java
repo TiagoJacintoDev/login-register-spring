@@ -28,7 +28,9 @@ public class UserModel implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    // TODO: Remove JsonIgnore and solve concurrency/crash bug when sending a request
+    @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "TB_USERS_ROLES",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

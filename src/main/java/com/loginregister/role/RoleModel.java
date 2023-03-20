@@ -1,5 +1,6 @@
 package com.loginregister.role;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.loginregister.user.UserModel;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,7 +22,9 @@ public class RoleModel implements GrantedAuthority {
     @Column(nullable = false,unique = true)
     private String roleName;
 
+    // TODO: Remove JsonIgnore and solve concurrency/crash bug when sending a request
     @ManyToMany(mappedBy = "roleModels")
+    @JsonIgnore
     private List<UserModel> users;
 
     public void addUser(UserModel user) {

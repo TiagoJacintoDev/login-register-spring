@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<UserModel>> getAllUsers(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
@@ -78,6 +78,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/role/{roleId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> assignRoleToUser(@PathVariable(value = "userId") UUID userId,
                                                    @PathVariable(value = "roleId") UUID roleId){
         Optional<UserModel> userModelOptional = userService.findById(userId);
